@@ -1,0 +1,5 @@
+.vscode
+.next
+.swc
+dist
+node_modules
