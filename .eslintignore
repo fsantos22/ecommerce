@@ -1,0 +1,2 @@
+#prisma config
+/src/lib/db.ts

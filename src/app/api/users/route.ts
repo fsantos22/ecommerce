@@ -14,7 +14,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request, _:any) {
   const { firstName, lastName, email, password } = await req.json();
 
   try {
