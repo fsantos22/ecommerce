@@ -2,16 +2,8 @@ import prisma from '@/lib/db'
 import { hashPass } from '@/utils/HashManager'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(req?: NextRequest) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(req!.url) || undefined
-    const id = searchParams ? searchParams.get('id') : undefined
-
-    if (id) {
-      const user = await prisma.users.findUnique({ where: { id } })
-      return NextResponse.json(user, { status: 200 })
-    }
-
     const users = await prisma.users.findMany()
 
     return NextResponse.json(users, { status: 200 })
