@@ -1,34 +1,21 @@
-'use client';
-import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
-import { Stack } from '@mui/material';
-import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
+'use client'
+import * as React from 'react'
+import AppBar from '@mui/material/AppBar'
+import Box from '@mui/material/Box'
+import Toolbar from '@mui/material/Toolbar'
+import Typography from '@mui/material/Typography'
+import { Stack } from '@mui/material'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
 
 export default function Navbar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="sticky" color="primary">
         <Toolbar>
-          <Stack
-            direction="row"
-            spacing={2}
-            alignItems={'center'}
-            justifyContent={'space-between'}
-            flexGrow={1}
-          >
+          <Stack direction="row" spacing={2} alignItems={'center'} justifyContent={'space-between'} flexGrow={1}>
             <Link href="/">
-              <Typography
-                variant="h6"
-                noWrap
-                component="div"
-                sx={{ display: { xs: 'none', sm: 'block' }, color: '#fff' }}
-              >
+              <Typography variant="h6" noWrap component="div" sx={{ display: { xs: 'none', sm: 'block' }, color: '#fff' }}>
                 LOGO
               </Typography>
             </Link>
@@ -50,5 +37,5 @@ export default function Navbar() {
         </Toolbar>
       </AppBar>
     </Box>
-  );
+  )
 }

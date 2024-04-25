@@ -1,50 +1,50 @@
-"use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Alert from "@mui/material/Alert";
-import Avatar from "@mui/material/Avatar";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import CssBaseline from "@mui/material/CssBaseline";
-import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
-import Snackbar from "@mui/material/Snackbar";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+'use client'
+import { zodResolver } from '@hookform/resolvers/zod'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import Alert from '@mui/material/Alert'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Container from '@mui/material/Container'
+import CssBaseline from '@mui/material/CssBaseline'
+import Grid from '@mui/material/Grid'
+import Link from '@mui/material/Link'
+import Snackbar from '@mui/material/Snackbar'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 export default function SignUp() {
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false)
 
   const userSchema = z
     .object({
       firstName: z
         .string()
-        .min(2, { message: "O nome deve ter pelo menos 2 caracteres" })
-        .max(30, { message: "O nome deve ter no máximo 30 caracteres" }),
+        .min(2, { message: 'O nome deve ter pelo menos 2 caracteres' })
+        .max(30, { message: 'O nome deve ter no máximo 30 caracteres' }),
       lastName: z
         .string()
-        .min(2, { message: "O sobrenome deve ter pelo menos 2 caracteres" })
-        .max(60, { message: "O sobrenome deve ter no máximo 60 caracteres" }),
-      email: z.string().email({ message: "E-mail inválido" }),
+        .min(2, { message: 'O sobrenome deve ter pelo menos 2 caracteres' })
+        .max(60, { message: 'O sobrenome deve ter no máximo 60 caracteres' }),
+      email: z.string().email({ message: 'E-mail inválido' }),
       password: z
         .string()
-        .min(5, { message: "A senha deve ter pelo menos 5 caracteres" })
-        .max(15, { message: "A senha deve ter no máximo 15 caracteres" }),
+        .min(5, { message: 'A senha deve ter pelo menos 5 caracteres' })
+        .max(15, { message: 'A senha deve ter no máximo 15 caracteres' }),
       confirmPassword: z
         .string()
-        .min(5, { message: "A senha deve ter pelo menos 5 caracteres" })
-        .max(15, { message: "A senha deve ter no máximo 15 caracteres" }),
+        .min(5, { message: 'A senha deve ter pelo menos 5 caracteres' })
+        .max(15, { message: 'A senha deve ter no máximo 15 caracteres' }),
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: "As senhas não são iguais",
-      path: ["confirmPassword"],
-    });
+      message: 'As senhas não são iguais',
+      path: ['confirmPassword'],
+    })
 
-  type UserSchema = z.infer<typeof userSchema>;
+  type UserSchema = z.infer<typeof userSchema>
 
   const {
     register,
@@ -52,26 +52,26 @@ export default function SignUp() {
     formState: { errors },
   } = useForm<UserSchema>({
     resolver: zodResolver(userSchema),
-  });
+  })
 
   const handleSubmitUser = async (data: UserSchema) => {
     try {
-      const endpoint = "/api/users";
+      const endpoint = '/api/users'
       const options = {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-      };
-      const response = await fetch(endpoint, options);
+      }
+      const response = await fetch(endpoint, options)
       if (response.ok) {
-        setIsAlertOpen(true);
+        setIsAlertOpen(true)
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -86,7 +86,7 @@ export default function SignUp() {
       >
         {isAlertOpen && (
           <Snackbar
-          data-testid='alert-toast'
+            data-testid="alert-toast"
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             open={isAlertOpen}
             autoHideDuration={2000}
@@ -104,12 +104,7 @@ export default function SignUp() {
           Cadastrar acesso
         </Typography>
 
-        <Box
-          component="form"
-          data-testid="signup-form"
-          onSubmit={handleSubmit(handleSubmitUser)}
-          sx={{ mt: 3 }}
-        >
+        <Box component="form" data-testid="signup-form" onSubmit={handleSubmit(handleSubmitUser)} sx={{ mt: 3 }}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <TextField
@@ -160,12 +155,7 @@ export default function SignUp() {
               />
             </Grid>
           </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
             Cadastrar conta
           </Button>
           <Grid container justifyContent="flex-end">
@@ -178,5 +168,5 @@ export default function SignUp() {
         </Box>
       </Box>
     </Container>
-  );
+  )
 }
