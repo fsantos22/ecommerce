@@ -1,5 +1,12 @@
-.vscode
 .next
-.swc
-dist
+.cache
+package-lock.json
+public
 node_modules
+next-env.d.ts
+next.config.ts
+yarn.lock
+dist
+coverage
+
+.*
