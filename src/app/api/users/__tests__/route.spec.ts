@@ -1,6 +1,7 @@
 import httpMocks from 'node-mocks-http'
 import { prismaMock } from '../../../../../singleton'
 import * as handler from '../route'
+import { NextRequest } from 'next/server'
 
 type TMockUser = Omit<handler.userDTO, 'confirmPassword' | 'created_at' | 'updated_at'> & { created_at: string; updated_at: string }
 
@@ -71,7 +72,7 @@ describe('/api/users', () => {
           confirmPassword: 'abc123',
         })
 
-        const response = await handler.POST(req)
+        const response = await handler.POST(req as unknown as NextRequest)
         const body = await response.json()
 
         expect(response.status).toBe(201)
@@ -96,7 +97,7 @@ describe('/api/users', () => {
           confirmPassword: 'abc123',
         })
 
-        const response = await handler.POST(req)
+        const response = await handler.POST(req as unknown as NextRequest)
         const body = await response.json()
 
         expect(response.status).toBe(409)

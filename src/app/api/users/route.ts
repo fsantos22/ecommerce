@@ -1,6 +1,18 @@
 import prisma from '@/lib/db'
+import { userSchema } from '@/schemas/user'
 import { hashPass } from '@/utils/HashManager'
 import { NextRequest, NextResponse } from 'next/server'
+
+export type userDTO = {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  confirmPassword: string
+  created_at: Date
+  updated_at: Date
+}
 
 export async function GET() {
   try {
@@ -13,14 +25,12 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const { firstName, lastName, email, password } = await JSON.parse(JSON.stringify(req))
-
   try {
-    const findUser = await prisma.users.findFirst({ where: { email } })
+    const body = await req.json()
+    const response = userSchema.parse(body)
+    const { firstName, lastName, email, password } = response
 
-    if (!firstName || !lastName || !email || !password) {
-      return NextResponse.json({ message: 'Missing parameter in body request' }, { status: 400 })
-    }
+    const findUser = await prisma.users.findFirst({ where: { email } })
 
     if (findUser) {
       return NextResponse.json({ message: 'E-mail already registered' }, { status: 409 })
