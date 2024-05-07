@@ -1,6 +1,5 @@
 import prisma from '@/lib/db'
-import { userSchema } from '@/schemas/user'
-import { excludeFromList, excludeFromObject } from '@/utils/ExcludeResponseParam'
+import { UserSchemaOutput } from '@/schemas/user'
 import { hashPass } from '@/utils/HashManager'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -10,16 +9,24 @@ export type userDTO = {
   lastName: string
   email: string
   password: string
-  confirmPassword: string
-  created_at: Date
-  updated_at: Date
+  createdAt: Date
+  updatedAt: Date
 }
 
 export async function GET() {
   try {
-    const users = await prisma.users.findMany()
+    const users = await prisma.users.findMany({
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    })
 
-    return NextResponse.json(excludeFromList(users, ['password']), { status: 200 })
+    return NextResponse.json(users, { status: 200 })
   } catch (error) {
     return NextResponse.json({ message: 'Error in fetching users' + error }, { status: 500 })
   }
@@ -28,7 +35,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const response = userSchema.parse(body)
+    const response = UserSchemaOutput.parse(body)
     const { firstName, lastName, email, password } = response
 
     const findUser = await prisma.users.findUnique({ where: { email } })
@@ -46,12 +53,18 @@ export async function POST(req: NextRequest) {
         email,
         password: hashPassword,
       },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
     })
 
     return NextResponse.json(
       {
         message: 'User created successfully',
-        user: excludeFromObject(newUser, ['password']),
+        user: newUser,
       },
       { status: 201 },
     )
@@ -72,12 +85,13 @@ export async function PATCH(req: NextRequest) {
   const updatedUser = await prisma.users.update({
     where: { id },
     data: { email, password },
+    select: { id: true, firstName: true, lastName: true, email: true },
   })
 
   return NextResponse.json(
     {
       message: 'User updated successfully',
-      user: excludeFromObject(updatedUser, ['password']),
+      user: updatedUser,
     },
     { status: 201 },
   )
@@ -94,12 +108,18 @@ export async function DELETE(req: Request) {
 
   const deletedUser = await prisma.users.delete({
     where: { id },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+    },
   })
 
   return NextResponse.json(
     {
       message: 'User deleted successfully',
-      user: excludeFromObject(deletedUser, ['password']),
+      user: deletedUser,
     },
     { status: 201 },
   )

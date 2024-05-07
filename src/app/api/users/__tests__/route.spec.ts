@@ -2,9 +2,8 @@ import { NextRequest } from 'next/server'
 import httpMocks from 'node-mocks-http'
 import { prismaMock } from '../../../../../singleton'
 import * as handler from '../route'
-import { excludeFromList, excludeFromObject } from '@/utils/ExcludeResponseParam'
 
-type TMockUser = Omit<handler.userDTO, 'confirmPassword' | 'created_at' | 'updated_at'> & { created_at: string; updated_at: string }
+type TMockUser = Omit<handler.userDTO, 'createdAt' | 'updatedAt'> & { createdAt: string; updatedAt: string }
 
 const userResponseMock: TMockUser[] = [
   {
@@ -13,8 +12,8 @@ const userResponseMock: TMockUser[] = [
     lastName: 'Doe',
     email: 'johndoe@test.com',
     password: 'abc123',
-    created_at: '2024-04-03T22:52:06.903Z',
-    updated_at: '2024-04-03T22:52:06.903Z',
+    createdAt: '2024-04-03T22:52:06.903Z',
+    updatedAt: '2024-04-03T22:52:06.903Z',
   },
   {
     id: 'abc002',
@@ -22,8 +21,8 @@ const userResponseMock: TMockUser[] = [
     lastName: 'Doe',
     email: 'janedoe@test.com',
     password: 'cde456',
-    created_at: '2024-04-25T00:01:10.583Z',
-    updated_at: '2024-04-25T00:01:10.583Z',
+    createdAt: '2024-04-25T00:01:10.583Z',
+    updatedAt: '2024-04-25T00:01:10.583Z',
   },
 ]
 
@@ -33,8 +32,8 @@ const userMock = {
   lastName: 'Doe',
   email: 'johndoe@test.com',
   password: 'abc123',
-  created_at: '2024-04-03T22:52:06.903Z',
-  updated_at: '2024-04-03T22:52:06.903Z',
+  createdAt: '2024-04-03T22:52:06.903Z',
+  updatedAt: '2024-04-03T22:52:06.903Z',
 }
 
 describe('/api/users', () => {
@@ -52,7 +51,7 @@ describe('/api/users', () => {
       const body = await response.json()
 
       expect(response.status).toBe(200)
-      expect(body).toEqual(excludeFromList(userResponseMock, ['password']))
+      expect(body).toEqual(userResponseMock)
     })
   })
 
@@ -70,14 +69,15 @@ describe('/api/users', () => {
           lastName: userMock.lastName,
           email: userMock.email,
           password: userMock.password,
-          confirmPassword: userMock.password,
         })
 
         const response = await handler.POST(req as unknown as NextRequest)
         const body = await response.json()
 
+        console.log({ body })
+
         expect(response.status).toBe(201)
-        expect(body.user).toEqual(excludeFromObject(userMock, ['password']))
+        expect(body.user).toEqual(userMock)
         expect(body.message).toEqual('User created successfully')
       })
     })
@@ -95,7 +95,6 @@ describe('/api/users', () => {
           lastName: userMock.lastName,
           email: userMock.email,
           password: userMock.password,
-          confirmPassword: userMock.password,
         })
 
         const response = await handler.POST(req as unknown as NextRequest)
@@ -117,7 +116,6 @@ describe('/api/users', () => {
             lastName: userMock.lastName,
             email: userMock.email,
             password: userMock.password,
-            confirmPassword: userMock.password,
           })
 
           const response = await handler.POST(req as unknown as NextRequest)
@@ -141,7 +139,6 @@ describe('/api/users', () => {
             firstName: userMock.firstName,
             email: userMock.email,
             password: userMock.password,
-            confirmPassword: userMock.password,
           })
 
           const response = await handler.POST(req as unknown as NextRequest)
@@ -165,7 +162,7 @@ describe('/api/users', () => {
             firstName: 'John',
             lastName: 'Doe',
             password: 'abc123',
-            confirmPassword: 'abc123',
+            // confirmPassword: 'abc123',
           })
 
           const response = await handler.POST(req as unknown as NextRequest)
@@ -189,7 +186,7 @@ describe('/api/users', () => {
             firstName: 'John',
             lastName: 'Doe',
             email: 'johndoe@test.com',
-            confirmPassword: 'abc123',
+            // confirmPassword: 'abc123',
           })
 
           const response = await handler.POST(req as unknown as NextRequest)
@@ -199,30 +196,6 @@ describe('/api/users', () => {
           expect(response.status).toBe(500)
           expect(errorObject.code).toEqual('invalid_type')
           expect(errorObject.path[0]).toEqual('password')
-          expect(errorObject.message).toEqual('Required')
-        })
-
-        it('should throw an error when confirmPassword input is missing', async () => {
-          prismaMock.users.create.mockResolvedValue(userMock as unknown as handler.userDTO)
-
-          const { req } = httpMocks.createMocks({
-            method: 'POST',
-            body: {},
-          })
-          req.json = jest.fn().mockResolvedValue({
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'johndoe@test.com',
-            password: 'abc123',
-          })
-
-          const response = await handler.POST(req as unknown as NextRequest)
-          const body = await response.json()
-          const errorObject = body.error.issues[0]
-
-          expect(response.status).toBe(500)
-          expect(errorObject.code).toEqual('invalid_type')
-          expect(errorObject.path[0]).toEqual('confirmPassword')
           expect(errorObject.message).toEqual('Required')
         })
       })
@@ -240,7 +213,6 @@ describe('/api/users', () => {
             lastName: userMock.lastName,
             email: userMock.email,
             password: userMock.password,
-            confirmPassword: userMock.password,
           })
 
           const response = await handler.POST(req as unknown as NextRequest)
@@ -265,7 +237,6 @@ describe('/api/users', () => {
             lastName: userMock.lastName,
             email: userMock.email,
             password: userMock.password,
-            confirmPassword: userMock.password,
           })
 
           const response = await handler.POST(req as unknown as NextRequest)
@@ -290,7 +261,6 @@ describe('/api/users', () => {
             lastName: 'D',
             email: userMock.email,
             password: userMock.password,
-            confirmPassword: userMock.password,
           })
 
           const response = await handler.POST(req as unknown as NextRequest)
@@ -315,7 +285,6 @@ describe('/api/users', () => {
             lastName: 'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ',
             email: userMock.email,
             password: userMock.password,
-            confirmPassword: userMock.password,
           })
 
           const response = await handler.POST(req as unknown as NextRequest)
@@ -340,7 +309,6 @@ describe('/api/users', () => {
             lastName: userMock.lastName,
             email: 'johndoe@example',
             password: userMock.password,
-            confirmPassword: userMock.password,
           })
 
           const response = await handler.POST(req as unknown as NextRequest)
@@ -365,7 +333,7 @@ describe('/api/users', () => {
             lastName: userMock.lastName,
             email: userMock.email,
             password: 'abc1',
-            confirmPassword: 'abc1',
+            // confirmPassword: 'abc1',
           })
 
           const response = await handler.POST(req as unknown as NextRequest)
@@ -390,7 +358,7 @@ describe('/api/users', () => {
             lastName: userMock.lastName,
             email: userMock.email,
             password: 'abcdefghjkl1234567890',
-            confirmPassword: 'abcdefghjkl1234567890',
+            // confirmPassword: 'abcdefghjkl1234567890',
           })
 
           const response = await handler.POST(req as unknown as NextRequest)
@@ -402,31 +370,6 @@ describe('/api/users', () => {
           expect(errorObject.path[0]).toEqual('password')
           expect(errorObject.message).toEqual('A senha deve ter no máximo 15 caracteres')
         })
-
-        it('should throw an error when password and confirmPassword are not equal', async () => {
-          prismaMock.users.create.mockResolvedValue(userMock as unknown as handler.userDTO)
-
-          const { req } = httpMocks.createMocks({
-            method: 'POST',
-            body: {},
-          })
-          req.json = jest.fn().mockResolvedValue({
-            firstName: userMock.firstName,
-            lastName: userMock.lastName,
-            email: userMock.email,
-            password: userMock.password,
-            confirmPassword: 'cba321',
-          })
-
-          const response = await handler.POST(req as unknown as NextRequest)
-          const body = await response.json()
-          const errorObject = body.error.issues[0]
-
-          expect(response.status).toBe(500)
-          expect(errorObject.code).toEqual('custom')
-          expect(errorObject.path[0]).toEqual('confirmPassword')
-          expect(errorObject.message).toEqual('As senhas não são iguais')
-        })
       })
     })
   })
@@ -436,7 +379,7 @@ describe('/api/users', () => {
       it('should update e-mail when you pass only id and email parameters', async () => {
         prismaMock.users.findUnique.mockResolvedValue(userMock as unknown as handler.userDTO)
         const updatedUserMock = { ...userMock, email: 'johndoe@test.com.br' }
-        prismaMock.users.update.mockResolvedValue(excludeFromObject(updatedUserMock, ['password']) as unknown as handler.userDTO)
+        prismaMock.users.update.mockResolvedValue(updatedUserMock as unknown as handler.userDTO)
 
         const { req } = httpMocks.createMocks({
           method: 'PATCH',
@@ -452,13 +395,13 @@ describe('/api/users', () => {
 
         expect(response.status).toBe(201)
         expect(body.message).toEqual('User updated successfully')
-        expect(body.user).toEqual(excludeFromObject(updatedUserMock, ['password']))
+        expect(body.user).toEqual(updatedUserMock)
       })
 
       it('should update password when you pass only id and password parameters', async () => {
         prismaMock.users.findUnique.mockResolvedValue(userMock as unknown as handler.userDTO)
         const updatedUserMock = { ...userMock, password: 'cde456' }
-        prismaMock.users.update.mockResolvedValue(excludeFromObject(updatedUserMock, ['password']) as unknown as handler.userDTO)
+        prismaMock.users.update.mockResolvedValue(updatedUserMock as unknown as handler.userDTO)
 
         const { req } = httpMocks.createMocks({
           method: 'PATCH',
@@ -474,13 +417,13 @@ describe('/api/users', () => {
 
         expect(response.status).toBe(201)
         expect(body.message).toEqual('User updated successfully')
-        expect(body.user).toEqual(excludeFromObject(updatedUserMock, ['password']))
+        expect(body.user).toEqual(updatedUserMock)
       })
 
       it('should update e-mail and password when you pass id, email and password parameters', async () => {
         prismaMock.users.findUnique.mockResolvedValue(userMock as unknown as handler.userDTO)
         const updatedUserMock = { ...userMock, email: 'johndoe@test.com.br' }
-        prismaMock.users.update.mockResolvedValue(excludeFromObject(updatedUserMock, ['password']) as unknown as handler.userDTO)
+        prismaMock.users.update.mockResolvedValue(updatedUserMock as unknown as handler.userDTO)
 
         const { req } = httpMocks.createMocks({
           method: 'PATCH',
@@ -497,14 +440,14 @@ describe('/api/users', () => {
 
         expect(response.status).toBe(201)
         expect(body.message).toEqual('User updated successfully')
-        expect(body.user).toEqual(excludeFromObject(updatedUserMock, ['password']))
+        expect(body.user).toEqual(updatedUserMock)
       })
     })
 
     describe('Unhappy path', () => {
       it('should throw an error when user is not found', async () => {
         prismaMock.users.findUnique.mockResolvedValue(null)
-        prismaMock.users.update.mockResolvedValue(excludeFromObject(userMock, ['password']) as unknown as handler.userDTO)
+        prismaMock.users.update.mockResolvedValue(userMock as unknown as handler.userDTO)
 
         const { req } = httpMocks.createMocks({
           method: 'PATCH',
@@ -529,7 +472,7 @@ describe('/api/users', () => {
     describe('Happy path', () => {
       it('should update e-mail when you pass only id and email parameters', async () => {
         prismaMock.users.findUnique.mockResolvedValue(userMock as unknown as handler.userDTO)
-        prismaMock.users.delete.mockResolvedValue(excludeFromObject(userMock, ['password']) as unknown as handler.userDTO)
+        prismaMock.users.delete.mockResolvedValue(userMock as unknown as handler.userDTO)
 
         const { req } = httpMocks.createMocks({
           method: 'DELETE',
@@ -544,14 +487,14 @@ describe('/api/users', () => {
 
         expect(response.status).toBe(201)
         expect(body.message).toEqual('User deleted successfully')
-        expect(body.user).toEqual(excludeFromObject(userMock, ['password']))
+        expect(body.user).toEqual(userMock)
       })
     })
 
     describe('Unhappy path', () => {
       it('should throw an error when user is not found', async () => {
         prismaMock.users.findUnique.mockResolvedValue(null)
-        prismaMock.users.delete.mockResolvedValue(excludeFromObject(userMock, ['password']) as unknown as handler.userDTO)
+        prismaMock.users.delete.mockResolvedValue(userMock as unknown as handler.userDTO)
 
         const { req } = httpMocks.createMocks({
           method: 'DELETE',
