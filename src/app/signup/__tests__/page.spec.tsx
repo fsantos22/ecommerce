@@ -3,7 +3,6 @@
  */
 
 import SignUp from '@/app/signup/page'
-import '@testing-library/jest-dom'
 import { RenderResult, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 

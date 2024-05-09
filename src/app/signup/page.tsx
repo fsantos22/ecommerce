@@ -1,4 +1,5 @@
 'use client'
+import { UserSchemaInput } from '@/schemas/user'
 import { zodResolver } from '@hookform/resolvers/zod'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Alert from '@mui/material/Alert'
@@ -15,21 +16,20 @@ import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import {userSchema} from '@/schemas/user'
 export default function SignUp() {
   const [isAlertOpen, setIsAlertOpen] = useState(false)
 
-  type UserSchema = z.infer<typeof userSchema>
+  type UserSchemaInput = z.infer<typeof UserSchemaInput>
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<UserSchema>({
-    resolver: zodResolver(userSchema),
+  } = useForm<UserSchemaInput>({
+    resolver: zodResolver(UserSchemaInput),
   })
 
-  const handleSubmitUser = async (data: UserSchema) => {
+  const handleSubmitUser = async (data: UserSchemaInput) => {
     try {
       const endpoint = '/api/users'
       const options = {
