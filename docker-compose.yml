@@ -9,14 +9,13 @@ services:
       - ecom-db:/var/lib/postgresql/data # save data between restarts
     ports:
       - 5432:5432
-
   ecom-app:
     platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - 3000:3000
     volumes:
       - .:/app
       - nodemodules:/app/node_modules
