@@ -3,22 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
+    "commit": "npx cz",
+    "dev": "next dev",
     "format": "prettier --check --ignore-path .gitignore .",
     "format:fix": "prettier --write --ignore-path .gitignore .",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "migrate": "prisma migrate deploy",
     "prepare": "node .husky/install.mjs",
+    "start": "next start",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "commit": "npx cz"
+    "test:watch": "jest --watch"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint",
-      "pre-push": "git diff HEAD --quiet && npm run test:final && npm run build"
+      "pre-commit": "npm run lint && npm run format:fix",
+      "pre-push": "git diff HEAD --quiet && npm run build"
     }
   },
   "dependencies": {
@@ -30,14 +31,14 @@
     "@mui/material": "^5.15.13",
     "@mui/styled-engine-sc": "^6.0.0-alpha.17",
     "@prisma/client": "^5.11.0",
+    "jsonwebtoken": "^9.0.2",
     "next": "^14.2.4",
+    "nodemailer": "^6.9.14",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
     "react-hook-form": "^7.51.2",
     "styled-components": "^6.1.8",
     "zod": "^3.22.4"
-  },
-  "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
@@ -48,7 +49,9 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20",
+    "@types/nodemailer": "^6.4.15",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "^7.7.1",

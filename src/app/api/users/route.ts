@@ -1,6 +1,8 @@
 import prisma from '@/lib/db'
 import { UserSchemaOutput } from '@/schemas/user'
 import { hashPass } from '@/utils/HashManager'
+import { generateToken } from '@/utils/Jwt'
+import { sendMail } from '@root/service/mailService'
 import { NextRequest, NextResponse } from 'next/server'
 
 export type userDTO = {
@@ -15,7 +17,7 @@ export type userDTO = {
 
 export async function GET() {
   try {
-    const users = await prisma.users.findMany({
+    const users = await prisma.user.findMany({
       select: {
         id: true,
         firstName: true,
@@ -28,7 +30,7 @@ export async function GET() {
 
     return NextResponse.json(users, { status: 200 })
   } catch (error) {
-    return NextResponse.json({ message: 'Error in fetching users' + error }, { status: 500 })
+    return NextResponse.json({ message: 'Error in fetching users - ' + error }, { status: 500 })
   }
 }
 
@@ -38,7 +40,7 @@ export async function POST(req: NextRequest) {
     const response = UserSchemaOutput.parse(body)
     const { firstName, lastName, email, password } = response
 
-    const findUser = await prisma.users.findUnique({ where: { email } })
+    const findUser = await prisma.user.findUnique({ where: { email } })
 
     if (findUser) {
       return NextResponse.json({ message: 'E-mail already registered' }, { status: 409 })
@@ -46,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     const hashPassword = await hashPass(password)
 
-    const newUser = await prisma.users.create({
+    const newUser = await prisma.user.create({
       data: {
         firstName,
         lastName,
@@ -60,6 +62,10 @@ export async function POST(req: NextRequest) {
         email: true,
       },
     })
+    const emailVerificationToken = generateToken(newUser.id, email)
+    const emailUrl = process.env.HOST + '/api/activate/' + emailVerificationToken.token
+    const emailContent = `<span>Please, visit the link to activate your E-mail - <a href='${emailUrl}'>${emailUrl}</a><span>` //EDITAR E MONTAR O HTML COM O LINK
+    await sendMail({ subject: '[ECOM] E-mail verification', to: email, html: emailContent })
 
     return NextResponse.json(
       {
@@ -76,13 +82,13 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const { id, email, password } = await req.json()
 
-  const findUser = await prisma.users.findUnique({ where: { id } })
+  const findUser = await prisma.user.findUnique({ where: { id } })
 
   if (!findUser) {
     return NextResponse.json({ message: 'User not found' }, { status: 404 })
   }
 
-  const updatedUser = await prisma.users.update({
+  const updatedUser = await prisma.user.update({
     where: { id },
     data: { email, password },
     select: { id: true, firstName: true, lastName: true, email: true },
@@ -100,13 +106,13 @@ export async function PATCH(req: NextRequest) {
 export async function DELETE(req: Request) {
   const { id } = await req.json()
 
-  const findUser = await prisma.users.findUnique({ where: { id } })
+  const findUser = await prisma.user.findUnique({ where: { id } })
 
   if (!findUser) {
     return NextResponse.json({ message: 'User not found' }, { status: 404 })
   }
 
-  const deletedUser = await prisma.users.delete({
+  const deletedUser = await prisma.user.delete({
     where: { id },
     select: {
       id: true,

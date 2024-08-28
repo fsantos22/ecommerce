@@ -1,6 +1,6 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /ecom
 
 COPY package*.json .
 
@@ -8,12 +8,6 @@ COPY . .
 
 RUN npm ci --silent
 
-RUN npm run lint:fix
-
-RUN npm run format:fix
-
-RUN npm run build
-
 EXPOSE 3000
 
-CMD npm run start
+CMD npm run dev

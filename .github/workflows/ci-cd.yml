@@ -1,30 +1,30 @@
 name: Deploy application
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout Source
-              uses: actions/checkout@v4
-            - name: Build docker image
-              run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce .
-            - name: Login to Docker Hub
-              run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-            - name: Publish image to docker hub
-              run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce:latest
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: Build docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce .
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Publish image to docker hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce:latest
 
-    deploy:
-        needs: build
-        runs-on: self-hosted
-        steps:
-            - name: Pull image from Docker Hub
-              run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce:latest
-            - name: Delete old container
-              run: docker rm -f ecommerce-container
-            - name: Run Docker Container
-              run: docker run -d -p 3000:3000 --name ecommerce-container ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull image from Docker Hub
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce:latest
+      - name: Delete old container
+        run: docker rm -f ecommerce-container
+      - name: Run Docker Container
+        run: docker run -d -p 3000:3000 --name ecommerce-container ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce

@@ -3,27 +3,30 @@ services:
     platform: linux/amd64
     image: postgres:15-alpine
     restart: always
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
-      - ecom-db:/var/lib/postgresql/data # save data between restarts
+      - db_data:/var/lib/postgresql/data # save data between restarts
     ports:
       - 5432:5432
+
   ecom-app:
     platform: linux/amd64
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - 3000:3000
     volumes:
-      - .:/app
-      - nodemodules:/app/node_modules
+      - .:/ecom
+      - nodemodules:/ecom/node_modules
     depends_on:
       - ecom-database
 
 volumes:
-  ecom-db:
-    name: ecom-db
-    external: true
-  nodemodules: {}
+  db_data:
+  nodemodules:
