@@ -29,4 +29,8 @@
 next-env.d.ts
 
 # VS-Code
-/.vscode/
+.vscode
+
+#data folders
+/products
+/public/products
