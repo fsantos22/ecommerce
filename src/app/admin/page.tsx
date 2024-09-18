@@ -68,7 +68,7 @@ export default async function AdminDashboard() {
         body={formatNumber(userData.userCount)}
       />
       <DashboardCard
-        title="Clientes"
+        title="Produtos"
         subtitle={`${formatNumber(productData.inactiveCount)} inativos`}
         body={`${formatNumber(productData.activeCount)} ativos`}
       />
