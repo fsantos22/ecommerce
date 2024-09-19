@@ -9,7 +9,7 @@ import { Suspense } from "react";
 function getNewestProducts() {
   return db.product.findMany({
     where: { isAvailableForPurchase: true },
-    orderBy: { orders: { _count: "desc" } },
+    orderBy: { createdAt: "desc" },
     take: 6,
   });
 }
@@ -26,11 +26,11 @@ export default function HomePage() {
   return (
     <main className="space-y-12">
       <ProductGridSection
-        title="Populares"
+        title="Novidades"
         productsFetcher={getNewestProducts}
       />
       <ProductGridSection
-        title="Novidades"
+        title="Populares"
         productsFetcher={getMostPopularProducts}
       />
     </main>
