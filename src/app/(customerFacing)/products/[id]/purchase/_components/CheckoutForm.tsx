@@ -24,7 +24,7 @@ import { FormEvent, useState } from "react";
 
 type CheckoutFormProps = {
   product: {
-    id: string,
+    id: string;
     imagePath: string;
     name: string;
     priceInCents: number;
@@ -34,14 +34,14 @@ type CheckoutFormProps = {
 };
 
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string
+  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string,
 );
 
 export function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
   return (
-    <div className="max-w-5xl w-full mx-auto space-y-8">
-      <div className="flex gap-4 items-center">
-        <div className="aspect-video flex-shrink-0 w-1/3 relative">
+    <div className="mx-auto w-full max-w-5xl space-y-8">
+      <div className="flex items-center gap-4">
+        <div className="relative aspect-video w-1/3 flex-shrink-0">
           <Image
             src={product.imagePath}
             fill
@@ -67,7 +67,7 @@ export function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
 }
 
 function Form({
-  priceInCents,
+  // priceInCents,
   productId,
 }: {
   priceInCents: number;
@@ -77,6 +77,7 @@ function Form({
   const elements = useElements();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [email, setEmail] = useState<string>();
 
   async function handleSubmit(e: FormEvent) {
@@ -88,10 +89,12 @@ function Form({
 
     const orderExists = await userOrderExists(email!, productId);
 
-    if(orderExists){
-      setErrorMessage("Você já fez essa compra. Faça o download na seção Pedidos")
-      setIsLoading(false)
-      return
+    if (orderExists) {
+      setErrorMessage(
+        "Você já fez essa compra. Faça o download na seção Pedidos",
+      );
+      setIsLoading(false);
+      return;
     }
 
     //Check for existing order
